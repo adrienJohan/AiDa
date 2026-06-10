@@ -1,0 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aida"
+version = "0.1.0"
+
+# This block tells Python exactly which folders are code modules
+[tool.setuptools]
+packages = ["agents", "memory", "utils", "core", "workflows"]

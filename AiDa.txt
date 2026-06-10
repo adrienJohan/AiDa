@@ -1,0 +1,1513 @@
+# AiDa - Master Architecture & Development Document
+
+
+
+## Project Overview
+
+
+
+AiDa stands for **Artificial Intelligence Daily Assistant**.
+
+
+
+The goal of AiDa is not to be a simple chatbot.
+
+
+
+The goal is to build an AI assistant composed of multiple specialized agents that collaborate to help users with:
+
+
+
+* Fitness coaching
+
+* Nutrition coaching
+
+* Progress analysis
+
+
+
+The user interacts through a natural conversation while AiDa manages memory, onboarding, routing and specialized tasks behind the scenes.
+
+
+
+---
+
+
+
+# High-Level Architecture
+
+
+
+```text
+
+User
+
+  ↓
+
+Orchestrator
+
+  ↓
+
+────────────────────────────
+
+│ Profile Agent            │
+
+│ Coach Agent              │
+
+│ Nutrition Agent          │
+
+│ Analyst Agent            │
+
+────────────────────────────
+
+  ↓
+
+Memory Layer
+
+  ↓
+
+SQLite Database
+
+```
+
+
+
+---
+
+
+
+# Design Principles
+
+
+
+## Principle 1
+
+
+
+Agents do not ask questions.
+
+
+
+Agents only:
+
+
+
+* Extract information
+
+* Analyze information
+
+* Generate outputs
+
+
+
+The Orchestrator is responsible for:
+
+
+
+* Asking questions
+
+* Managing conversations
+
+* Routing requests
+
+* Managing workflows
+
+
+
+---
+
+
+
+## Principle 2
+
+
+
+Users can refuse to answer questions.
+
+
+
+AiDa must never get stuck in an infinite loop asking for information.
+
+
+
+If a user refuses a question:
+
+
+
+* The field can be marked as DECLINED
+
+* The workflow continues whenever possible
+
+
+
+---
+
+
+
+## Principle 3
+
+
+
+Long-term memory and short-term memory are different.
+
+
+
+Long-term memory:
+
+
+
+* Profile information
+
+* Preferences
+
+* Health notes
+
+
+
+Stored in database.
+
+
+
+Short-term memory:
+
+
+
+* Recent conversations
+
+* Temporary situations
+
+
+
+Stored in conversation history.
+
+
+
+Example:
+
+
+
+Permanent:
+
+
+
+* Asthma
+
+* Chronic knee pain
+
+
+
+Temporary:
+
+
+
+* Broken foot this week
+
+* Traveling this weekend
+
+
+
+---
+
+
+
+# Current Database
+
+
+
+## Profiles
+
+
+
+Stores persistent user information.
+
+
+
+Fields:
+
+
+
+* id
+
+* name
+
+* age
+
+* weight
+
+* height
+
+* goal
+
+
+
+Workout-related:
+
+
+
+* workout_equipment
+
+* workout_preferences
+
+
+
+Nutrition-related:
+
+
+
+* nutrition_preferences
+
+
+
+Health-related:
+
+
+
+* health_notes
+
+
+
+Additional memory:
+
+
+
+* aida_notes
+
+
+
+---
+
+
+
+## Meals
+
+
+
+Stores meal logs.
+
+
+
+Fields:
+
+
+
+* id
+
+* user_id
+
+* description
+
+* calories
+
+* protein
+
+* date
+
+
+
+---
+
+
+
+## Workouts
+
+
+
+Stores workout logs.
+
+
+
+Fields:
+
+
+
+* id
+
+* user_id
+
+* workout
+
+* completed
+
+* date
+
+
+
+---
+
+
+
+## Conversations
+
+
+
+Stores conversation history.
+
+
+
+Fields:
+
+
+
+* id
+
+* user_id
+
+* user_message
+
+* ai_response
+
+* timestamp
+
+
+
+---
+
+
+
+# Current Implementation
+
+
+
+## agents/profile_agent.py
+
+
+
+Status: Implemented
+
+
+
+Responsibility:
+
+
+
+Extract profile information from user messages.
+
+
+
+Input:
+
+
+
+Natural language.
+
+
+
+Output:
+
+
+
+Dictionary containing:
+
+
+
+* name
+
+* age
+
+* weight
+
+* height
+
+* goal
+
+* workout_equipment
+
+* workout_preferences
+
+* nutrition_preferences
+
+* health_notes
+
+* aida_notes
+
+
+
+Features:
+
+
+
+* Unit standardization
+
+* Height → cm
+
+* Weight → kg
+
+* Inference notes stored in aida_notes
+
+
+
+---
+
+
+
+## memory/memory.py
+
+
+
+Status: Implemented
+
+
+
+Functions:
+
+
+
+### save_profile()
+
+
+
+Creates profile in database.
+
+
+
+Returns profile id.
+
+
+
+### get_profile()
+
+
+
+Retrieves profile from database.
+
+
+
+Returns dictionary.
+
+
+
+### update_profile()
+
+
+
+Updates profile.
+
+
+
+Rules:
+
+
+
+* Non-null fields overwrite old values.
+
+* aida_notes are appended.
+
+
+
+---
+
+
+
+## utils/profile_utils.py
+
+
+
+Status: Implemented
+
+
+
+### get_missing_fields()
+
+
+
+Checks missing onboarding information.
+
+
+
+Required:
+
+
+
+* name
+
+* age
+
+* weight
+
+* height
+
+* goal
+
+
+
+Returns:
+
+
+
+List of missing fields.
+
+
+
+### get_question()
+
+
+
+Returns onboarding question for a field.
+
+
+
+---
+
+
+
+## utils/workout_utils.py
+
+
+
+Status: Implemented
+
+
+
+### get_missing_workout_info()
+
+
+
+Checks missing coaching information.
+
+
+
+Current fields:
+
+
+
+* goal
+
+* workout_equipment
+
+* workout_preferences
+
+* health_notes
+
+
+
+### get_workout_question()
+
+
+
+Returns coaching question.
+
+
+
+---
+
+
+
+## agents/workout_agent.py
+
+
+
+Status: Partially Implemented
+
+
+
+Current:
+
+
+
+### generate_workout()
+
+
+
+Uses Gemini.
+
+
+
+Inputs:
+
+
+
+* age
+
+* weight
+
+* height
+
+* goal
+
+* workout_equipment
+
+* workout_preferences
+
+* health_notes
+
+
+
+Output:
+
+
+
+Weekly workout plan.
+
+
+
+Current limitation:
+
+
+
+No onboarding logic connected yet.
+
+
+
+---
+
+
+
+# Session State Architecture
+
+
+
+AiDa maintains session state.
+
+
+
+Example:
+
+
+
+```python
+
+session = {
+
+    "mode": "coach",
+
+    "waiting_for": "workout_equipment"
+
+}
+
+```
+
+
+
+Possible modes:
+
+
+
+* onboarding
+
+* assistant
+
+* coach
+
+* nutrition
+
+* analysis
+
+
+
+Purpose:
+
+
+
+Allows AiDa to understand answers such as:
+
+
+
+"I have dumbbells."
+
+
+
+without rerouting.
+
+
+
+---
+
+
+
+# Orchestrator Design
+
+
+
+Status: Not Implemented
+
+
+
+The Orchestrator is the central brain.
+
+
+
+Responsibilities:
+
+
+
+1. Manage session state.
+
+2. Route requests.
+
+3. Ask questions.
+
+4. Handle skipped information.
+
+5. Coordinate workflows.
+
+
+
+---
+
+
+
+## Routing Strategy
+
+
+
+Level 3 Routing
+
+
+
+Combination of:
+
+
+
+* Session awareness
+
+* AI intent routing
+
+
+
+Example:
+
+
+
+Current mode:
+
+
+
+coach
+
+
+
+User:
+
+
+
+"I have dumbbells."
+
+
+
+Route directly to Coach Agent.
+
+
+
+Example:
+
+
+
+No active mode.
+
+
+
+User:
+
+
+
+"Help me eat better."
+
+
+
+AI router selects:
+
+
+
+Nutrition Agent.
+
+
+
+---
+
+
+
+# Profile Agent Workflow
+
+
+
+Status: Designed
+
+
+
+Step 1
+
+
+
+User arrives.
+
+
+
+Step 2
+
+
+
+Profile onboarding begins.
+
+
+
+Required:
+
+
+
+* name
+
+* age
+
+* weight
+
+* height
+
+* goal
+
+
+
+Step 3
+
+
+
+Profile complete.
+
+
+
+Step 4
+
+
+
+Enter Assistant Mode.
+
+
+
+---
+
+
+
+# Assistant Mode
+
+
+
+Status: Designed
+
+
+
+AiDa waits for requests.
+
+
+
+Examples:
+
+
+
+* Create a workout plan
+
+* Create a meal plan
+
+* Analyze my progress
+
+
+
+The Orchestrator routes the request.
+
+
+
+---
+
+
+
+# Coach Agent
+
+
+
+Status: Designed
+
+
+
+Responsibilities:
+
+
+
+1. Collect coaching information.
+
+2. Generate workout plans.
+
+
+
+Owned fields:
+
+
+
+* workout_equipment
+
+* workout_preferences
+
+* health_notes
+
+
+
+Workflow:
+
+
+
+User requests workout.
+
+
+
+Coach Agent checks required information.
+
+
+
+If information missing:
+
+
+
+Returns missing fields.
+
+
+
+Orchestrator asks questions.
+
+
+
+When enough information exists:
+
+
+
+Generate workout.
+
+
+
+Output:
+
+
+
+Weekly workout program.
+
+
+
+Includes:
+
+
+
+* Training days
+
+* Rest days
+
+* Exercises
+
+* Sets
+
+* Reps
+
+* Cardio duration
+
+
+
+Future:
+
+
+
+Workout adaptation from user feedback.
+
+
+
+---
+
+
+
+# Nutrition Agent
+
+
+
+Status: Designed
+
+
+
+Responsibilities:
+
+
+
+1. Nutrition onboarding.
+
+2. Meal plan generation.
+
+3. Meal analysis.
+
+4. Meal logging.
+
+
+
+Owned fields:
+
+
+
+* nutrition_preferences
+
+
+
+Potential future field:
+
+
+
+* nutrition_style
+
+
+
+Examples:
+
+
+
+* 3 meals/day
+
+* Intermittent fasting
+
+
+
+---
+
+
+
+## Nutrition Planning
+
+
+
+Input:
+
+
+
+* Goal
+
+* Nutrition preferences
+
+* Nutrition style
+
+
+
+Output:
+
+
+
+Meal plan.
+
+
+
+---
+
+
+
+## Meal Analysis (Text)
+
+
+
+Example:
+
+
+
+"I ate chicken and rice."
+
+
+
+Output:
+
+
+
+* Estimated calories
+
+* Estimated protein
+
+* Nutrition advice
+
+
+
+Meal saved in database.
+
+
+
+---
+
+
+
+## Meal Analysis (Image)
+
+
+
+Example:
+
+
+
+User uploads meal photo.
+
+
+
+Pipeline:
+
+
+
+Image
+
+↓
+
+Food recognition
+
+↓
+
+Calories estimate
+
+↓
+
+Protein estimate
+
+↓
+
+Advice
+
+↓
+
+Database storage
+
+
+
+Output linked to user's goals.
+
+
+
+---
+
+
+
+# Analyst Agent
+
+
+
+Status: Designed
+
+
+
+Purpose:
+
+
+
+Transform stored data into insights.
+
+
+
+NOT a reporting agent.
+
+
+
+The Analyst must identify patterns.
+
+
+
+Input:
+
+
+
+* Profiles
+
+* Meals
+
+* Workouts
+
+
+
+Examples:
+
+
+
+Bad:
+
+
+
+"You completed 4 workouts."
+
+
+
+Good:
+
+
+
+"You are becoming more consistent."
+
+
+
+Bad:
+
+
+
+"You consumed 90g protein."
+
+
+
+Good:
+
+
+
+"Protein intake drops on weekends."
+
+
+
+Output:
+
+
+
+* Patterns
+
+* Trends
+
+* Recommendations
+
+
+
+---
+
+
+
+# Final Demonstration Scenario
+
+
+
+Preferred Demo:
+
+
+
+Demo A
+
+
+
+User starts from zero.
+
+
+
+Flow:
+
+
+
+Profile onboarding
+
+↓
+
+Assistant mode
+
+↓
+
+Workout request
+
+↓
+
+Coach onboarding
+
+↓
+
+Workout generation
+
+↓
+
+Nutrition request
+
+↓
+
+Nutrition onboarding
+
+↓
+
+Meal plan generation
+
+↓
+
+Meal photo upload
+
+↓
+
+Meal analysis
+
+↓
+
+Progress analysis
+
+↓
+
+Insights and recommendations
+
+
+
+Purpose:
+
+
+
+Demonstrate all agents and moving parts.
+
+
+
+---
+
+
+
+# Remaining Tasks
+
+
+
+## Phase 1
+
+
+
+Implement Orchestrator.
+
+
+
+Implement session state.
+
+
+
+Implement AI routing.
+
+
+
+---
+
+
+
+## Phase 2
+
+
+
+Finish Coach Agent.
+
+
+
+Connect onboarding.
+
+
+
+Connect workout generation.
+
+
+
+---
+
+
+
+## Phase 3
+
+
+
+Implement Nutrition Agent.
+
+
+
+Implement nutrition onboarding.
+
+
+
+Implement meal plan generation.
+
+
+
+Implement meal analysis from text.
+
+
+
+Implement meal analysis from image.
+
+
+
+Implement meal logging.
+
+
+
+---
+
+
+
+## Phase 4
+
+
+
+Implement Analyst Agent.
+
+
+
+Generate insights.
+
+
+
+Generate recommendations.
+
+
+
+---
+
+
+
+## Phase 5
+
+
+
+Implement conversation logging.
+
+
+
+Save messages to conversations table.
+
+
+
+Retrieve recent context.
+
+
+
+---
+
+
+
+## Phase 6
+
+
+
+Build Streamlit interface.
+
+
+
+Chat interface.
+
+
+
+Image upload.
+
+
+
+Workout display.
+
+
+
+Nutrition display.
+
+
+
+Analysis display.
+
+
+
+---
+
+
+
+## Phase 7
+
+
+
+Testing.
+
+
+
+Demo preparation.
+
+
+
+Bug fixing.
+
+
+
+Presentation preparation.
+
+
+
+No new features after this phase.
+
+
+
+
+
+
