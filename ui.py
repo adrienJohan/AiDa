@@ -177,16 +177,10 @@ def inject_css():
             font-weight: 700;
         }
 
-        .stButton > button[kind="primary"],
-        .stButton > button[data-testid="baseButton-primary"] {
-            background: var(--aida-forest) !important;
-            border-color: var(--aida-forest) !important;
-            color: #FFFFFF !important;
-        }
-
-        .stButton > button[kind="primary"] *,
-        .stButton > button[data-testid="baseButton-primary"] * {
-            color: #FFFFFF !important;
+        .stButton > button[kind="primary"] {
+            background: var(--aida-forest);
+            border-color: var(--aida-forest);
+            color: #FFFFFF;
         }
 
         .stButton > button:hover,
@@ -196,16 +190,10 @@ def inject_css():
             background: #EDF6F1;
         }
 
-        .stButton > button[kind="primary"]:hover,
-        .stButton > button[data-testid="baseButton-primary"]:hover {
-            background: var(--aida-green) !important;
-            border-color: var(--aida-green) !important;
-            color: #FFFFFF !important;
-        }
-
-        .stButton > button[kind="primary"]:hover *,
-        .stButton > button[data-testid="baseButton-primary"]:hover * {
-            color: #FFFFFF !important;
+        .stButton > button[kind="primary"]:hover {
+            background: var(--aida-green);
+            border-color: var(--aida-green);
+            color: #FFFFFF;
         }
 
         div[data-testid="stMetricValue"] {
@@ -359,12 +347,11 @@ def seed_recent_messages():
         st.session_state.aida_messages.append({"role": "assistant", "content": ai_response})
 
 
-def ask_aida(user_message, mode=None, image_path=None, append_user=True):
+def ask_aida(user_message, mode=None, image_path=None):
     session = ensure_state()
     if mode:
         set_mode(session, mode)
-    if append_user:
-        st.session_state.aida_messages.append({"role": "user", "content": user_message})
+    st.session_state.aida_messages.append({"role": "user", "content": user_message})
     try:
         with st.spinner("AiDa is thinking..."):
             response = process_message(user_message, session, image_path=image_path)

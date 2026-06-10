@@ -57,6 +57,34 @@ else:
     chart_df = weights_df.set_index("date")[["weight"]]
     st.line_chart(chart_df, use_container_width=True)
 
+st.markdown("### Progress Analysis")
+if st.button("Analyze Progress"):
+    response = ask_aida("Analyze my progress.", mode="analysis")
+    st.session_state.latest_progress_analysis = response
+    st.rerun()
+
+latest_analysis = st.session_state.get("latest_progress_analysis")
+if latest_analysis:
+    st.markdown(
+        f"""
+        <div class="aida-card">
+            <div class="aida-kicker">{icon("progress", 18)} Analyst Agent</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+    render_messages([{"role": "assistant", "content": latest_analysis}])
+else:
+    st.markdown(
+        """
+        <div class="aida-card">
+            <h3>No progress analysis yet</h3>
+            <div class="aida-label">Run an analysis after logging workouts, meals, or weight updates.</div>
+        </div>
+        """,
+        unsafe_allow_html=True,
+    )
+
 st.markdown("### Weekly Report")
 report_messages = [
     message for message in st.session_state.get("aida_messages", [])

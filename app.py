@@ -129,7 +129,7 @@ def render_mission_control():
     )
 
     st.markdown("### Actions")
-    action_cols = st.columns(5)
+    action_cols = st.columns(6)
     if action_cols[0].button("Create Workout Plan", use_container_width=True):
         ask_aida("Create a workout plan for me.", mode="coach")
         st.switch_page("pages/Coach.py")
@@ -141,7 +141,11 @@ def render_mission_control():
     if action_cols[3].button("Weekly Report", use_container_width=True):
         ask_aida("Give me my weekly report.", mode="weekly_report")
         st.switch_page("pages/Progress.py")
-    if action_cols[4].button("Talk To AiDa", use_container_width=True):
+    if action_cols[4].button("Analyze Progress", use_container_width=True):
+        response = ask_aida("Analyze my progress.", mode="analysis")
+        st.session_state.latest_progress_analysis = response
+        st.switch_page("pages/Progress.py")
+    if action_cols[5].button("Talk To AiDa", use_container_width=True):
         st.switch_page("pages/Coach.py")
 
     st.markdown("### Today At A Glance")
