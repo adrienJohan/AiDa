@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime, date
+from datetime import datetime, date as date_class
 
 
 def save_profile(profile) :
@@ -221,7 +221,7 @@ def get_workouts(user_id):
 
 def save_meals( user_id, description, calories, protein, meal_type="unknown", date=None): 
     if date is None: 
-        date = date.today().isoformat()
+        date = date_class.today().isoformat()
 
     conn = sqlite3.connect("data/aida.db")
 
@@ -316,7 +316,7 @@ def get_workout_sessions(user_id):
 
 
 def save_workout_plan (user_id, week_plan): 
-    week_start = date.today().isoformat()
+    week_start = date_class.today().isoformat()
 
     for session in week_plan: 
         save_workout_session(
@@ -364,7 +364,7 @@ def get_today_name():
 def save_weight_log( user_id, weight, log_date=None): 
     if log_date is None: 
 
-        log_date = date.today().isoformat()
+        log_date = date_class.today().isoformat()
 
     conn = sqlite3.connect("data/aida.db")
 

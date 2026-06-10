@@ -114,11 +114,14 @@ def handle_nutrition_mode( user_message, session, image_path=None):
     # Decide what nutrition task
     #
 
-    nutrition_intent = (
-        route_nutrition_request(
-            user_message
+    if image_path is not None:
+        nutrition_intent = "meal_image"
+    else:
+        nutrition_intent = (
+            route_nutrition_request(
+                user_message
+            )
         )
-    )
 
     #
     # Meal plan

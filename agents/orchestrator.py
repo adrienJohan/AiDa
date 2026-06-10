@@ -45,7 +45,11 @@ def process_message(user_message, session, image_path=None):
 
     elif mode == "nutrition":
 
-        response = handle_nutrition_mode( user_message, session )
+        response = handle_nutrition_mode(
+            user_message,
+            session,
+            image_path=image_path
+        )
 
     elif mode == "analysis":
 
@@ -187,5 +191,4 @@ def route_intent(user_message):
     )
 
     return response.text.strip().lower()
-
 
