@@ -12,6 +12,7 @@ from workflows.analysis import handle_analysis_mode
 from workflows.weight_update import handle_weight_update
 from workflows.weekly_report import handle_weekly_report
 from memory.memory import save_conversation
+from agents.response_agent import humanize_response
 from core.session import (
     get_profile_id,
     set_mode,
@@ -63,7 +64,9 @@ def process_message(user_message, session, image_path=None):
 
     else:
 
-        response = "Unknown mode."
+        response = humanize_response(
+            "Something unexpected happened and AiDa doesn't know what mode it's in. Apologize briefly and offer to help with workouts, nutrition, or progress analysis.",
+        )
 
     profile_id = get_profile_id(session)
 
@@ -122,9 +125,8 @@ def handle_assistant_mode(user_message, session):
 
     else:
 
-        return (
-            "I'm here to help. "
-            "You can ask me about workouts, nutrition or progress analysis."
+        return humanize_response(
+            "The user sent a casual message or greeting that doesn't match any specific intent. Respond warmly and let them know what you can help with: workouts, nutrition, or progress analysis.",
         )
 
 

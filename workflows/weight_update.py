@@ -4,14 +4,15 @@ from memory.memory import save_weight_log, update_profile
 
 from core.session import get_profile_id, set_mode
 
+from agents.response_agent import humanize_response
+
 
 def handle_weight_update(user_message, session): 
     result = extract_weight_update(user_message)
 
     if not result["valid"]: 
-        return (
-            "I couldn't determine "
-            "your weight."
+        return humanize_response(
+            "The user tried to update their weight but the message was unclear. Ask them to provide their current weight in kg.",
         )
     
     profile_id = get_profile_id(session)
@@ -22,8 +23,7 @@ def handle_weight_update(user_message, session):
 
     set_mode(session,"assistant")
 
-    return (
-        f"Weight logged successfully.\n\n"
-        f"Current weight: "
-        f"{result['weight']} kg"
+    return humanize_response(
+        "The user just updated their weight. Confirm the new weight has been logged and offer brief encouragement.",
+        {"new_weight": f"{result['weight']} kg"},
     )

@@ -19,6 +19,7 @@ from core.session import (
 )
 
 from agents.profile_agent import profile_agent
+from agents.response_agent import humanize_response
 
 
 def handle_onboarding(user_message, session): 
@@ -94,8 +95,7 @@ def handle_onboarding(user_message, session):
         "assistant"
     )
 
-    return (
-        f"Perfect {profile['name']}! "
-        "Your profile is complete. "
-        "How can I help you today?"
+    return humanize_response(
+        "The user just finished setting up their profile. Welcome them warmly and ask how you can help them get started.",
+        {"user_name": profile['name']},
     )

@@ -10,6 +10,7 @@ from core.session import (
 )
 
 from agents.analyst_agent import analyze_progress
+from agents.response_agent import humanize_response
 
 def handle_analysis_mode( user_message, session ):
 
@@ -22,9 +23,8 @@ def handle_analysis_mode( user_message, session ):
             "assistant"
         )
 
-        return (
-            "I couldn't find a profile "
-            "to analyze."
+        return humanize_response(
+            "The user asked for a progress analysis but no profile exists yet. Let them know they need to complete onboarding first.",
         )
 
     profile = get_profile(profile_id)

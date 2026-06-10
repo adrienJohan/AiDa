@@ -29,6 +29,8 @@ from agents.workout_agent import generate_workout
 
 from agents.workout_completion_agent import extract_completed_day
 
+from agents.response_agent import humanize_response
+
 from google import genai
 
 from dotenv import load_dotenv
@@ -58,12 +60,12 @@ def handle_coach_mode( user_message, session ):
 
         if not field_result["valid"]:
 
-            return (
-                f"I'm currently asking about "
-                f"{waiting_for.replace('_', ' ')}.\n\n"
-                + get_workout_question(
-                    waiting_for
-                )
+            return humanize_response(
+                "The user gave an unclear answer to a coach onboarding question. Gently re-ask the question.",
+                {
+                    "field": waiting_for.replace('_', ' '),
+                    "original_question": get_workout_question(waiting_for),
+                },
             )
 
         profile_data = {
@@ -147,9 +149,8 @@ def handle_coach_mode( user_message, session ):
 
         if not completion["valid"]:
 
-            return (
-                "I couldn't determine "
-                "which workout was completed."
+            return humanize_response(
+                "The user tried to mark a workout as completed but the message was unclear. Ask them to clarify which day's workout they completed.",
             )
 
         day = completion["day"]
@@ -173,15 +174,14 @@ def handle_coach_mode( user_message, session ):
 
         if updated == 0:
 
-            return (
-                f"No planned workout "
-                f"was found for {day}."
+            return humanize_response(
+                "The user tried to mark a workout as completed but no planned workout exists for that day.",
+                {"day": day},
             )
 
-        return (
-            f"Great work!\n\n"
-            f"I've marked your "
-            f"{day} workout as completed."
+        return humanize_response(
+            "The user just completed a workout. Congratulate them naturally and confirm it's been logged.",
+            {"day": day},
         )
 
     #
@@ -217,10 +217,8 @@ def handle_coach_mode( user_message, session ):
         "assistant"
     )
 
-    return (
-        "I'm not sure whether you want "
-        "a workout plan or you're logging "
-        "a completed workout."
+    return humanize_response(
+        "The user said something related to workouts but it's unclear if they want a new plan or are logging a completed workout. Ask them to clarify.",
     )
 
 def route_coach_request( user_message) : 

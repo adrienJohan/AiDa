@@ -26,6 +26,8 @@ from agents.nutrition_agent import generate_meal_plan
 
 from agents.image_meal_agent import analyze_meal_image
 
+from agents.response_agent import humanize_response
+
 from dotenv import load_dotenv
 from google import genai
 
@@ -59,12 +61,12 @@ def handle_nutrition_mode( user_message, session, image_path=None):
 
         if not field_result["valid"]:
 
-            return (
-                f"I'm currently asking about "
-                f"{waiting_for.replace('_', ' ')}.\n\n"
-                + get_nutrition_question(
-                    waiting_for
-                )
+            return humanize_response(
+                "The user gave an unclear answer to a nutrition onboarding question. Gently re-ask the question.",
+                {
+                    "field": waiting_for.replace('_', ' '),
+                    "original_question": get_nutrition_question(waiting_for),
+                },
             )
 
         profile_data = {
@@ -168,21 +170,16 @@ def handle_nutrition_mode( user_message, session, image_path=None):
             "assistant"
         )
 
-        return (
-            f"Meal Type: "
-            f"{analysis['meal_type']}\n\n"
-
-            f"Date: "
-            f"{analysis['date']}\n\n"
-
-            f"Estimated Calories: "
-            f"{analysis['calories']}\n\n"
-
-            f"Estimated Protein: "
-            f"{analysis['protein']}g\n\n"
-
-            f"Advice:\n"
-            f"{analysis['advice']}"
+        return humanize_response(
+            "The user just logged a meal via text. Summarize what was logged and give brief nutrition advice in a conversational way.",
+            {
+                "meal_description": analysis['description'],
+                "meal_type": analysis['meal_type'],
+                "date": analysis['date'],
+                "estimated_calories": analysis['calories'],
+                "estimated_protein": f"{analysis['protein']}g",
+                "advice": analysis['advice'],
+            },
         )
     
     elif nutrition_intent == "meal_image": 
@@ -202,21 +199,16 @@ def handle_nutrition_mode( user_message, session, image_path=None):
             "assistant"
         )
 
-        return (
-            f"Meal Type: "
-            f"{analysis['meal_type']}\n\n"
-
-            f"Date: "
-            f"{analysis['date']}\n\n"
-
-            f"Estimated Calories: "
-            f"{analysis['calories']}\n\n"
-
-            f"Estimated Protein: "
-            f"{analysis['protein']}g\n\n"
-
-            f"Advice:\n"
-            f"{analysis['advice']}"
+        return humanize_response(
+            "The user just uploaded a meal photo for analysis. Describe what was identified, share the nutrition estimates, and give brief advice conversationally.",
+            {
+                "meal_description": analysis['description'],
+                "meal_type": analysis['meal_type'],
+                "date": analysis['date'],
+                "estimated_calories": analysis['calories'],
+                "estimated_protein": f"{analysis['protein']}g",
+                "advice": analysis['advice'],
+            },
         )
 
     set_mode(
@@ -224,9 +216,8 @@ def handle_nutrition_mode( user_message, session, image_path=None):
         "assistant"
     )
 
-    return (
-        "I couldn't determine "
-        "the nutrition request."
+    return humanize_response(
+        "The user said something related to nutrition but the intent was unclear. Ask them to clarify whether they want a meal plan, want to log a meal, or need nutrition advice.",
     )
 
 
