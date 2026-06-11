@@ -1,5 +1,11 @@
 .env
 .venv
 tests/
-*jpeg
-*jpg
+
+
+*.jpeg
+*.jpg
+
+
+**/__pycache__/
+*.pyc
