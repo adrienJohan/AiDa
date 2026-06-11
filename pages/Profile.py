@@ -1,6 +1,8 @@
 import streamlit as st
+import textwrap
 
 from ui import (
+    add_spacer,
     current_profile,
     ensure_state,
     icon,
@@ -32,15 +34,16 @@ if not profile:
 status = "Complete" if is_profile_complete(profile) else "In Progress"
 st.markdown(
     f"""
-    <div class="aida-card">
-        <div class="aida-kicker">{icon("profile", 18)} {status}</div>
-        <h3>{profile.get("name") or "Your AiDa profile"}</h3>
-        <div class="aida-label">{profile.get("goal") or "Goal not set yet"}</div>
-    </div>
-    """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("profile", 18)} {status}</div>
+<h3>{profile.get("name") or "Your AiDa profile"}</h3>
+<div class="aida-label">{profile.get("goal") or "Goal not set yet"}</div>
+</div>
+""",
     unsafe_allow_html=True,
 )
 
+add_spacer("1rem")
 st.markdown("### Personal Details")
 with st.form("profile_form"):
     col1, col2 = st.columns(2)
@@ -74,6 +77,7 @@ if submitted:
     st.success("Profile updated.")
     st.rerun()
 
+add_spacer("1.5rem")
 st.markdown("### Memory")
 cols = st.columns(3)
 cols[0].markdown(

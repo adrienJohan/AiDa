@@ -1,7 +1,9 @@
 import streamlit as st
+import textwrap
 
 from agents.orchestrator import process_message
 from ui import (
+    add_spacer,
     ask_aida,
     current_profile,
     ensure_state,
@@ -35,30 +37,29 @@ if not profile:
 
 st.markdown(
     f"""
-    <div class="aida-card">
-        <div class="aida-kicker">{icon("logo", 18)} AiDa</div>
-        <h3>Welcome back {profile.get("name") or ""}</h3>
-        <div class="aida-label">What would you like to work on today?</div>
-    </div>
-    """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("logo", 18)} AiDa</div>
+<h3>Welcome back {profile.get("name") or ""}</h3>
+<div class="aida-label">What would you like to work on today?</div>
+</div>
+""",
     unsafe_allow_html=True,
 )
 
-st.markdown("### Quick Actions")
-cols = st.columns(5)
-if cols[0].button("Completed Workout", use_container_width=True):
-    ask_aida("I completed today's workout.", mode="coach")
-    st.rerun()
-if cols[1].button("Log Meal", use_container_width=True):
-    st.session_state.pending_meal_log = True
-if cols[2].button("Analyze Meal Photo", use_container_width=True):
-    st.session_state.pending_photo_log = True
-if cols[3].button("Update Weight", use_container_width=True):
-    st.session_state.pending_weight_update = True
-if cols[4].button("Weekly Report", use_container_width=True):
-    ask_aida("Give me my weekly report.", mode="weekly_report")
-    st.rerun()
 
+# ── Camera dialog (clean modal pop-up) ──────────────────────────────
+@st.dialog("Take a Photo")
+def camera_dialog():
+    """Opens a clean modal with the device camera."""
+    camera = st.camera_input("Capture your meal")
+    if camera is not None and st.button("Use this photo", type="primary"):
+        path = save_upload(camera)
+        st.session_state.pending_photo_log = False
+        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
+        st.rerun()
+
+
+# ── Inline forms for meal log & weight (unchanged logic) ────────────
 if st.session_state.get("pending_meal_log"):
     with st.form("meal_log_form", clear_on_submit=True):
         meal = st.text_area("Meal", placeholder="For lunch I ate chicken, rice, and vegetables.")
@@ -77,16 +78,8 @@ if st.session_state.get("pending_weight_update"):
         ask_aida(f"I weigh {weight} kg now.", mode="weight_update")
         st.rerun()
 
-if st.session_state.get("pending_photo_log"):
-    uploaded = st.file_uploader("Meal photo", type=["jpg", "jpeg", "png"])
-    camera = st.camera_input("Take a meal photo")
-    image = uploaded or camera
-    if image is not None and st.button("Analyze Photo", type="primary"):
-        path = save_upload(image)
-        st.session_state.pending_photo_log = False
-        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
-        st.rerun()
 
+# ── Conversation ────────────────────────────────────────────────────
 st.markdown("### Conversation")
 if not st.session_state.aida_messages:
     st.session_state.aida_messages.append(
@@ -113,3 +106,52 @@ if message:
     st.rerun()
 
 render_messages(st.session_state.aida_messages[-14:])
+
+
+# ── Inline photo input (appears at the bottom of chat) ──────────────
+if st.session_state.get("pending_photo_log"):
+    st.markdown(
+        f"""
+<div class="aida-message-ai">
+<div class="aida-message-name">AiDa</div>
+<div>Upload a photo of your meal or take one with your camera.</div>
+</div>
+""",
+        unsafe_allow_html=True,
+    )
+    upload_col, camera_col = st.columns(2)
+    with upload_col:
+        uploaded = st.file_uploader(
+            "Upload a meal photo",
+            type=["jpg", "jpeg", "png"],
+            key="coach_photo_upload",
+        )
+    with camera_col:
+        if st.button("Take Photo", use_container_width=True, type="secondary"):
+            camera_dialog()
+
+    if uploaded is not None and st.button("Analyze Photo", type="primary"):
+        path = save_upload(uploaded)
+        st.session_state.pending_photo_log = False
+        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
+        st.rerun()
+
+
+# ── Quick-action chips ──────────────────────────────────────────────
+st.markdown('<div class="quick-chips-container"></div>', unsafe_allow_html=True)
+cols = st.columns(5)
+if cols[0].button("Completed Workout", use_container_width=True):
+    ask_aida("I completed today's workout.", mode="coach")
+    st.rerun()
+if cols[1].button("Log Meal", use_container_width=True):
+    st.session_state.pending_meal_log = True
+    st.rerun()
+if cols[2].button("Analyze Meal Photo", use_container_width=True):
+    st.session_state.pending_photo_log = True
+    st.rerun()
+if cols[3].button("Update Weight", use_container_width=True):
+    st.session_state.pending_weight_update = True
+    st.rerun()
+if cols[4].button("Weekly Report", use_container_width=True):
+    ask_aida("Give me my weekly report.", mode="weekly_report")
+    st.rerun()

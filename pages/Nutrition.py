@@ -1,6 +1,8 @@
 import streamlit as st
+import textwrap
 
 from ui import (
+    add_spacer,
     ask_aida,
     current_profile,
     ensure_state,
@@ -55,16 +57,18 @@ for col, title, body in [
     with col:
         st.markdown(
             f"""
-            <div class="aida-card">
-                <div class="aida-kicker">{icon("meal", 18)}</div>
-                <h3>{title}</h3>
-                <div class="aida-label">{body}</div>
-            </div>
-            """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("meal", 18)}</div>
+<h3>{title}</h3>
+<div class="aida-label">{body}</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 
+add_spacer("1.5rem")
 action_cols = st.columns(3)
+
 if action_cols[0].button("Create Meal Plan", use_container_width=True):
     ask_aida("Create a meal plan for me.", mode="nutrition")
     st.switch_page("pages/Coach.py")
@@ -82,12 +86,32 @@ if st.session_state.get("show_meal_form"):
         ask_aida(meal, mode="nutrition")
         st.rerun()
 
+
+@st.dialog("Take a Photo")
+def camera_dialog():
+    """Clean modal with the device camera."""
+    camera = st.camera_input("Capture your meal")
+    if camera is not None and st.button("Use this photo", type="primary"):
+        path = save_upload(camera)
+        st.session_state.show_photo_form = False
+        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
+        st.rerun()
+
+
 if st.session_state.get("show_photo_form"):
-    uploaded = st.file_uploader("Meal photo", type=["jpg", "jpeg", "png"])
-    camera = st.camera_input("Take a meal photo")
-    image = uploaded or camera
-    if image is not None and st.button("Analyze Photo", type="primary"):
-        path = save_upload(image)
+    upload_col, camera_col = st.columns(2)
+    with upload_col:
+        uploaded = st.file_uploader(
+            "Upload a meal photo",
+            type=["jpg", "jpeg", "png"],
+            key="nutrition_photo_upload",
+        )
+    with camera_col:
+        if st.button("Take Photo", use_container_width=True, type="secondary"):
+            camera_dialog()
+
+    if uploaded is not None and st.button("Analyze Photo", type="primary"):
+        path = save_upload(uploaded)
         st.session_state.show_photo_form = False
         ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
         st.rerun()
@@ -96,11 +120,11 @@ st.markdown("### Logged Meals")
 if df.empty:
     st.markdown(
         """
-        <div class="aida-card">
-            <h3>No meals logged yet</h3>
-            <div class="aida-label">Log a meal from this page or ask AiDa in Coach.</div>
-        </div>
-        """,
+<div class="aida-card">
+<h3>No meals logged yet</h3>
+<div class="aida-label">Log a meal from this page or ask AiDa in Coach.</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
 else:

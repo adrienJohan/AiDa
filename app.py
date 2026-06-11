@@ -1,6 +1,8 @@
 import streamlit as st
+import textwrap
 
 from ui import (
+    add_spacer,
     ask_aida,
     current_profile,
     ensure_state,
@@ -31,17 +33,17 @@ def render_landing():
     with left:
         st.markdown(
             f"""
-            <section class="aida-hero">
-                <div>
-                    <div class="aida-kicker">{icon("logo", 18)} Artificial Intelligence Daily Assistant</div>
-                    <h1>AiDa</h1>
-                    <p class="aida-copy">
-                        A calm fitness and nutrition workspace with an AI coach that remembers your goals,
-                        builds plans, tracks progress, and helps you decide the next useful action.
-                    </p>
-                </div>
-            </section>
-            """,
+<section class="aida-hero">
+<div>
+<div class="aida-kicker">{icon("logo", 18)} Artificial Intelligence Daily Assistant</div>
+<h1>AiDa</h1>
+<p class="aida-copy">
+A calm fitness and nutrition workspace with an AI coach that remembers your goals,
+builds plans, tracks progress, and helps you decide the next useful action.
+</p>
+</div>
+</section>
+""",
             unsafe_allow_html=True,
         )
         if st.button("Enter AiDa", type="primary", use_container_width=False):
@@ -90,14 +92,15 @@ def render_profile_complete():
     st.markdown("## Profile Complete")
     st.markdown(
         f"""
-        <div class="aida-card">
-            <div class="aida-kicker">{icon("check", 18)} Setup finished</div>
-            <h3>Welcome {profile.get("name")}</h3>
-            <div class="aida-label">Ready to begin your fitness journey?</div>
-        </div>
-        """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("check", 18)} Setup finished</div>
+<h3>Welcome {profile.get("name")}</h3>
+<div class="aida-label">Ready to begin your fitness journey?</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
+    add_spacer("1.5rem")
     if st.button("Go to Mission Control", type="primary"):
         st.session_state.profile_complete_seen = True
         st.rerun()
@@ -120,14 +123,15 @@ def render_mission_control():
     st.markdown("### Recommended Next Step")
     st.markdown(
         f"""
-        <div class="aida-card">
-            <h3>{icon("logo", 20)} AiDa Recommendation</h3>
-            <div class="aida-label">{recommended_action(profile, metrics)}</div>
-        </div>
-        """,
+<div class="aida-card">
+<h3>{icon("logo", 20)} AiDa Recommendation</h3>
+<div class="aida-label">{recommended_action(profile, metrics)}</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
 
+    add_spacer("1rem")
     st.markdown("### Actions")
     action_cols = st.columns(6)
     if action_cols[0].button("Create Workout Plan", use_container_width=True):
@@ -153,34 +157,34 @@ def render_mission_control():
     with left:
         st.markdown(
             f"""
-            <div class="aida-card">
-                <div class="aida-kicker">{icon("dumbbell", 18)} Workouts</div>
-                <div class="aida-metric">{metrics["completed"]}/{metrics["total"]}</div>
-                <div class="aida-label">completed planned sessions</div>
-            </div>
-            """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("dumbbell", 18)} Workouts</div>
+<div class="aida-metric">{metrics["completed"]}/{metrics["total"]}</div>
+<div class="aida-label">completed planned sessions</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
     with middle:
         st.markdown(
             f"""
-            <div class="aida-card">
-                <div class="aida-kicker">{icon("meal", 18)} Nutrition</div>
-                <div class="aida-metric">{len(metrics["meals"])}</div>
-                <div class="aida-label">logged meals</div>
-            </div>
-            """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("meal", 18)} Nutrition</div>
+<div class="aida-metric">{len(metrics["meals"])}</div>
+<div class="aida-label">logged meals</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
     with right:
         st.markdown(
             f"""
-            <div class="aida-card">
-                <div class="aida-kicker">{icon("progress", 18)} Tracking</div>
-                <div class="aida-metric">{len(metrics["weights"])}</div>
-                <div class="aida-label">weight check-ins</div>
-            </div>
-            """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("progress", 18)} Tracking</div>
+<div class="aida-metric">{len(metrics["weights"])}</div>
+<div class="aida-label">weight check-ins</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 

@@ -1,6 +1,8 @@
 import streamlit as st
+import textwrap
 
 from ui import (
+    add_spacer,
     ask_aida,
     current_profile,
     ensure_state,
@@ -43,12 +45,12 @@ top[3].metric("Goal", profile.get("goal") or "Not set")
 if not workouts:
     st.markdown(
         f"""
-        <div class="aida-card">
-            <div class="aida-kicker">{icon("dumbbell", 18)} Workout Plan</div>
-            <h3>No plan yet</h3>
-            <div class="aida-label">Generate a weekly plan with AiDa, then it will appear here as completion cards.</div>
-        </div>
-        """,
+<div class="aida-card">
+<div class="aida-kicker">{icon("dumbbell", 18)} Workout Plan</div>
+<h3>No plan yet</h3>
+<div class="aida-label">Generate a weekly plan with AiDa, then it will appear here as completion cards.</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
     if st.button("Create Workout Plan", type="primary"):
@@ -56,6 +58,7 @@ if not workouts:
         st.rerun()
     st.stop()
 
+add_spacer("1rem")
 st.markdown("### Workout Plan")
 for row in workouts:
     status = row[6]
@@ -63,12 +66,12 @@ for row in workouts:
     with st.container():
         st.markdown(
             f"""
-            <div class="aida-card aida-session {status}">
-                <div class="aida-kicker">{row[3]} · {status_text}</div>
-                <h3>{row[4]}</h3>
-                <div class="aida-label">{row[5]}</div>
-            </div>
-            """,
+<div class="aida-card aida-session {status}">
+<div class="aida-kicker">{row[3]} · {status_text}</div>
+<h3>{row[4]}</h3>
+<div class="aida-label">{row[5]}</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
         if status != "completed":
@@ -76,6 +79,7 @@ for row in workouts:
                 mark_completed(profile["id"], row[3])
                 st.rerun()
 
+add_spacer("1rem")
 st.markdown("### Workout History")
 df = workouts_dataframe(workouts)
 st.dataframe(

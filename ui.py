@@ -1,3 +1,4 @@
+import base64
 import os
 import sqlite3
 import tempfile
@@ -5,6 +6,7 @@ from datetime import date
 
 import pandas as pd
 import streamlit as st
+import textwrap
 
 from agents.orchestrator import process_message
 from core.session import create_session, set_mode
@@ -18,6 +20,9 @@ from memory.memory import (
     mark_workout_session_completed,
     update_profile,
 )
+from markdown_it import MarkdownIt
+
+md = MarkdownIt()
 
 
 DB_PATH = "data/aida.db"
@@ -26,183 +31,244 @@ DB_PATH = "data/aida.db"
 def inject_css():
     st.markdown(
         """
-        <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-        :root {
-            --aida-forest: #1B4332;
-            --aida-green: #2D6A4F;
-            --aida-success: #40916C;
-            --aida-warning: #D4A373;
-            --aida-bg: #F8F9F6;
-            --aida-card: #FFFFFF;
-            --aida-text: #1A1A1A;
-            --aida-muted: #66736D;
-            --aida-line: #E2E8E1;
-        }
+:root {
+--aida-forest: #1B4332;
+--aida-green: #2D6A4F;
+--aida-success: #40916C;
+--aida-warning: #D4A373;
+--aida-bg: #F8F9F6;
+--aida-card: #FFFFFF;
+--aida-text: #1A1A1A;
+--aida-muted: #66736D;
+--aida-line: #E2E8E1;
+}
 
-        html, body, [class*="css"] {
-            font-family: Inter, sans-serif;
-        }
+html, body, [class*="css"] {
+font-family: Inter, sans-serif;
+}
 
-        .stApp {
-            background: var(--aida-bg);
-            color: var(--aida-text);
-        }
+.stApp {
+background: var(--aida-bg);
+color: var(--aida-text);
+}
 
-        h1, h2, h3 {
-            color: var(--aida-forest);
-            letter-spacing: 0;
-        }
+h1, h2, h3 {
+color: var(--aida-forest);
+letter-spacing: 0;
+}
 
-        div[data-testid="stSidebarContent"] {
-            background: #ffffff;
-            border-right: 1px solid var(--aida-line);
-        }
+div[data-testid="stSidebarContent"] {
+background: #ffffff;
+border-right: 1px solid var(--aida-line);
+}
 
-        .aida-hero {
-            min-height: 58vh;
-            display: flex;
-            align-items: center;
-            padding: 28px 0 18px;
-        }
+.aida-hero {
+min-height: 58vh;
+display: flex;
+align-items: center;
+padding: 28px 0 18px;
+}
 
-        .aida-hero h1 {
-            font-size: clamp(38px, 7vw, 64px);
-            line-height: 1;
-            margin: 0 0 16px;
-            max-width: 760px;
-        }
+.aida-hero h1 {
+font-size: clamp(38px, 7vw, 64px);
+line-height: 1;
+margin: 0 0 16px;
+max-width: 760px;
+}
 
-        .aida-copy {
-            color: var(--aida-muted);
-            font-size: 18px;
-            line-height: 1.65;
-            max-width: 700px;
-        }
+.aida-copy {
+color: var(--aida-muted);
+font-size: 18px;
+line-height: 1.65;
+max-width: 700px;
+}
 
-        .aida-card {
-            background: var(--aida-card);
-            border: 1px solid var(--aida-line);
-            border-radius: 8px;
-            padding: 20px;
-            box-shadow: 0 8px 24px rgba(27, 67, 50, 0.06);
-            height: 100%;
-        }
+.aida-metric {
+font-size: 30px;
+font-weight: 800;
+color: var(--aida-forest);
+line-height: 1.1;
+}
 
-        .aida-card h3 {
-            font-size: 19px;
-            margin: 0 0 8px;
-        }
+.aida-card {
+background: var(--aida-card);
+border: 1px solid var(--aida-line);
+border-radius: 8px;
+padding: 24px;
+box-shadow: 0 8px 24px rgba(27, 67, 50, 0.06);
+height: 100%;
+margin-bottom: 20px;
+}
 
-        .aida-kicker {
-            color: var(--aida-green);
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: .08em;
-            text-transform: uppercase;
-            margin-bottom: 10px;
-        }
+.aida-card h3 {
+font-size: 19px;
+margin: 0 0 12px;
+}
 
-        .aida-metric {
-            font-size: 30px;
-            font-weight: 800;
-            color: var(--aida-forest);
-            line-height: 1.1;
-        }
+.aida-label {
+color: var(--aida-muted);
+font-size: 14px;
+margin-top: 5px;
+}
 
-        .aida-label {
-            color: var(--aida-muted);
-            font-size: 14px;
-            margin-top: 5px;
-        }
+.aida-pill {
+display: inline-flex;
+align-items: center;
+gap: 8px;
+padding: 6px 10px;
+border-radius: 999px;
+background: #EDF6F1;
+color: var(--aida-forest);
+font-size: 13px;
+font-weight: 700;
+margin: 2px 6px 2px 0;
+}
 
-        .aida-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            border-radius: 999px;
-            background: #EDF6F1;
-            color: var(--aida-forest);
-            font-size: 13px;
-            font-weight: 700;
-            margin: 2px 6px 2px 0;
-        }
+.aida-session {
+border-left: 4px solid var(--aida-green);
+}
 
-        .aida-session {
-            border-left: 4px solid var(--aida-green);
-        }
+.aida-session.completed {
+border-left-color: var(--aida-success);
+background: #F1FAF5;
+}
 
-        .aida-session.completed {
-            border-left-color: var(--aida-success);
-            background: #F1FAF5;
-        }
+.aida-session.planned {
+border-left-color: var(--aida-warning);
+}
 
-        .aida-session.planned {
-            border-left-color: var(--aida-warning);
-        }
+.aida-message-user,
+.aida-message-ai {
+border-radius: 8px;
+padding: 14px 16px;
+margin: 10px 0;
+border: 1px solid var(--aida-line);
+}
 
-        .aida-message-user,
-        .aida-message-ai {
-            border-radius: 8px;
-            padding: 14px 16px;
-            margin: 10px 0;
-            border: 1px solid var(--aida-line);
-        }
+.aida-message-user {
+background: #F1F4EF;
+}
 
-        .aida-message-user {
-            background: #F1F4EF;
-        }
+.aida-message-ai {
+background: #FFFFFF;
+border-left: 4px solid var(--aida-green);
+}
 
-        .aida-message-ai {
-            background: #FFFFFF;
-            border-left: 4px solid var(--aida-green);
-        }
+.aida-message-name {
+font-size: 12px;
+font-weight: 800;
+color: var(--aida-green);
+text-transform: uppercase;
+letter-spacing: .08em;
+margin-bottom: 6px;
+}
 
-        .aida-message-name {
-            font-size: 12px;
-            font-weight: 800;
-            color: var(--aida-green);
-            text-transform: uppercase;
-            letter-spacing: .08em;
-            margin-bottom: 6px;
-        }
+.stButton, .stDownloadButton {
+margin-top: 10px;
+margin-bottom: 10px;
+}
 
-        .stButton > button,
-        .stDownloadButton > button {
-            border-radius: 8px;
-            border: 1px solid var(--aida-green);
-            color: var(--aida-forest);
-            font-weight: 700;
-        }
+.stButton > button,
+.stDownloadButton > button {
+border-radius: 8px;
+border: 1px solid var(--aida-green);
+color: var(--aida-forest);
+font-weight: 700;
+padding: 0.5rem 1rem;
+}
 
-        .stButton > button[kind="primary"] {
-            background: var(--aida-forest);
-            border-color: var(--aida-forest);
-            color: #FFFFFF;
-        }
+.stButton > button[kind="primary"] {
+background: var(--aida-forest);
+border-color: var(--aida-forest);
+color: #FFFFFF;
+}
 
-        .stButton > button:hover,
-        .stDownloadButton > button:hover {
-            border-color: var(--aida-forest);
-            color: var(--aida-forest);
-            background: #EDF6F1;
-        }
+.stButton > button:hover,
+.stDownloadButton > button:hover {
+border-color: var(--aida-forest);
+color: var(--aida-forest);
+background: #EDF6F1;
+}
 
-        .stButton > button[kind="primary"]:hover {
-            background: var(--aida-green);
-            border-color: var(--aida-green);
-            color: #FFFFFF;
-        }
+.stButton > button[kind="primary"]:hover {
+background: var(--aida-green);
+border-color: var(--aida-green);
+color: #FFFFFF;
+}
 
-        div[data-testid="stMetricValue"] {
-            color: var(--aida-forest);
-        }
-        </style>
-        """,
+div[data-testid="stMetricValue"] {
+color: var(--aida-forest);
+}
+
+.aida-message-user p, .aida-message-ai p {
+margin: 0 0 8px 0;
+}
+.aida-message-user p:last-child, .aida-message-ai p:last-child {
+margin-bottom: 0;
+}
+.aida-message-user h1, .aida-message-ai h1,
+.aida-message-user h2, .aida-message-ai h2,
+.aida-message-user h3, .aida-message-ai h3 {
+margin: 12px 0 6px 0;
+color: var(--aida-forest);
+font-weight: 700;
+line-height: 1.2;
+}
+.aida-message-user h1, .aida-message-ai h1 { font-size: 1.3em; }
+.aida-message-user h2, .aida-message-ai h2 { font-size: 1.2em; }
+.aida-message-user h3, .aida-message-ai h3 { font-size: 1.1em; }
+.aida-message-user ul, .aida-message-ai ul,
+.aida-message-user ol, .aida-message-ai ol {
+margin: 8px 0 8px 24px;
+padding: 0;
+}
+.aida-message-user li, .aida-message-ai li {
+margin-bottom: 4px;
+}
+.aida-message-user strong, .aida-message-ai strong {
+color: var(--aida-forest);
+font-weight: 700;
+}
+
+.aida-message-img {
+max-width: 320px;
+border-radius: 8px;
+margin: 10px 0 4px;
+border: 1px solid var(--aida-line);
+}
+
+.aida-label p {
+margin: 0 0 4px 0;
+}
+.aida-label p:last-child {
+margin-bottom: 0;
+}
+.aida-label ul, .aida-label ol {
+margin: 4px 0 4px 20px;
+padding: 0;
+}
+
+/* Spacing utilities */
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+</style>
+""",
         unsafe_allow_html=True,
     )
+
+
+def add_spacer(height="1rem"):
+    st.markdown(f'<div style="margin-top: {height};"></div>', unsafe_allow_html=True)
 
 
 def icon(name, size=22):
@@ -311,14 +377,25 @@ def render_card(title, body="", kicker=None, icon_name=None):
     kicker_html = f'<div class="aida-kicker">{kicker}</div>' if kicker else ""
     st.markdown(
         f"""
-        <div class="aida-card">
-            {kicker_html}
-            <h3>{icon_html} {title}</h3>
-            <div class="aida-label">{body}</div>
-        </div>
-        """,
+<div class="aida-card">
+{kicker_html}
+<h3>{icon_html} {title}</h3>
+<div class="aida-label">{md.render(str(body))}</div>
+</div>
+""",
         unsafe_allow_html=True,
     )
+
+
+def _encode_image_base64(path):
+    """Read an image file and return a base64 data-URI string."""
+    if not path or not os.path.exists(path):
+        return None
+    ext = os.path.splitext(path)[1].lstrip(".").lower()
+    mime = {"jpg": "image/jpeg", "jpeg": "image/jpeg", "png": "image/png"}.get(ext, "image/jpeg")
+    with open(path, "rb") as f:
+        encoded = base64.b64encode(f.read()).decode()
+    return f"data:{mime};base64,{encoded}"
 
 
 def render_messages(messages):
@@ -326,13 +403,20 @@ def render_messages(messages):
         role = message.get("role", "assistant")
         name = "You" if role == "user" else "AiDa"
         css_class = "aida-message-user" if role == "user" else "aida-message-ai"
+        image_html = ""
+        img_path = message.get("image_path")
+        if img_path:
+            data_uri = _encode_image_base64(img_path)
+            if data_uri:
+                image_html = f'<img class="aida-message-img" src="{data_uri}" alt="meal photo" />'
         st.markdown(
             f"""
-            <div class="{css_class}">
-                <div class="aida-message-name">{name}</div>
-                <div>{message.get("content", "").replace(chr(10), "<br>")}</div>
-            </div>
-            """,
+<div class="{css_class}">
+<div class="aida-message-name">{name}</div>
+{image_html}
+<div>{md.render(message.get("content", ""))}</div>
+</div>
+""",
             unsafe_allow_html=True,
         )
 
@@ -351,7 +435,10 @@ def ask_aida(user_message, mode=None, image_path=None):
     session = ensure_state()
     if mode:
         set_mode(session, mode)
-    st.session_state.aida_messages.append({"role": "user", "content": user_message})
+    user_msg = {"role": "user", "content": user_message}
+    if image_path:
+        user_msg["image_path"] = image_path
+    st.session_state.aida_messages.append(user_msg)
     try:
         with st.spinner("AiDa is thinking..."):
             response = process_message(user_message, session, image_path=image_path)
