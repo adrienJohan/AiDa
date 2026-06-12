@@ -14,6 +14,8 @@ from ui import (
     render_messages,
     sidebar,
 )
+from agents.orchestrator import process_message
+from agents.response_agent import humanize_response
 
 app_logo = Image.open("assets/logo.png")
 
@@ -62,18 +64,29 @@ def render_onboarding():
     )
 
     if not st.session_state.aida_messages:
+        initial_message = humanize_response(
+            "AiDa is welcoming a brand new user and starting the initial onboarding process. Ask them to share a bit about themselves, including their name, their age, current weight, height, and fitness goals, be nice to them and friendly a little bit."
+        )
         st.session_state.aida_messages.append(
             {
                 "role": "assistant",
-                "content": "Tell me about yourself and your fitness goals. Include your age, current weight, height, and what you want to achieve if you can.",
+                "content": initial_message,
             }
         )
 
-    render_messages(st.session_state.aida_messages)
     user_message = st.chat_input("Reply to AiDa")
     if user_message:
-        ask_aida(user_message, mode="onboarding")
+        st.session_state.aida_messages.append({"role": "user", "content": user_message})
+        render_messages(st.session_state.aida_messages)
+        try:
+            with st.spinner("AiDa is thinking..."):
+                response = process_message(user_message, st.session_state.aida_session)
+                st.session_state.aida_messages.append({"role": "assistant", "content": response})
+        except Exception as exc:
+            st.error(f"AiDa error: {exc}")
         st.rerun()
+    else:
+        render_messages(st.session_state.aida_messages)
 
 
 def recommended_action(profile, metrics):

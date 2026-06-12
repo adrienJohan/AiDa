@@ -108,8 +108,12 @@ def handle_nutrition_mode( user_message, session, image_path=None):
             next_field
         )
 
-        return get_nutrition_question(
-            next_field
+        return humanize_response(
+            "AiDa needs to ask the user a question to learn about their nutrition plan preferences.",
+            {
+                "field": next_field.replace('_', ' '),
+                "original_question": get_nutrition_question(next_field),
+            },
         )
 
     #

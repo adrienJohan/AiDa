@@ -122,8 +122,12 @@ def handle_coach_mode( user_message, session ):
             next_field
         )
 
-        return get_workout_question(
-            next_field
+        return humanize_response(
+            "AiDa needs to ask the user a question to learn about their workout plan preferences.",
+            {
+                "field": next_field.replace('_', ' '),
+                "original_question": get_workout_question(next_field),
+            },
         )
     #
     # Coach intent routing

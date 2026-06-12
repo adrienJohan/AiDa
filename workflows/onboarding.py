@@ -77,7 +77,14 @@ def handle_onboarding(user_message, session):
             next_field
         )
 
-        return get_question(next_field)
+        return humanize_response(
+            "AiDa needs to ask the user a question to complete their profile, but should not include sentences such as: To build an accurate plan for you...",
+            {
+                "field": next_field.replace('_', ' '),
+                "original_question": get_question(next_field),
+                "user_name": profile['name'] or "unknown",
+            },
+        )
 
     #
     # Onboarding complete
