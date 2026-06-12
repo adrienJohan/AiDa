@@ -1,5 +1,6 @@
 import streamlit as st
 import textwrap
+from PIL import Image
 
 from ui import (
     add_spacer,
@@ -14,10 +15,12 @@ from ui import (
     sidebar,
 )
 
+app_logo = Image.open("assets/logo.png")
+
 
 st.set_page_config(
     page_title="Nutrition | AiDa",
-    page_icon="assets/logo.png",
+    page_icon=app_logo,
     layout="wide",
 )
 
@@ -99,22 +102,28 @@ def camera_dialog():
 
 
 if st.session_state.get("show_photo_form"):
-    upload_col, camera_col = st.columns(2)
-    with upload_col:
+    with st.container(border=True):
         uploaded = st.file_uploader(
             "Upload a meal photo",
             type=["jpg", "jpeg", "png"],
             key="nutrition_photo_upload",
         )
-    with camera_col:
-        if st.button("Take Photo", use_container_width=True, type="secondary"):
-            camera_dialog()
-
-    if uploaded is not None and st.button("Analyze Photo", type="primary"):
-        path = save_upload(uploaded)
-        st.session_state.show_photo_form = False
-        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
-        st.rerun()
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button(" Take Photo", use_container_width=True):
+                camera_dialog()
+        with col2:
+            if st.button("Cancel", use_container_width=True):
+                st.session_state.show_photo_form = False
+                st.rerun()
+        with col3:
+            analyze_disabled = uploaded is None
+            if st.button("Analyze", type="primary", use_container_width=True, disabled=analyze_disabled):
+                path = save_upload(uploaded)
+                st.session_state.show_photo_form = False
+                ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
+                st.rerun()
 
 st.markdown("### Logged Meals")
 if df.empty:

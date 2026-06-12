@@ -11,6 +11,7 @@ from workflows.nutrition import handle_nutrition_mode
 from workflows.analysis import handle_analysis_mode
 from workflows.weight_update import handle_weight_update
 from workflows.weekly_report import handle_weekly_report
+from workflows.chat import handle_chat_mode
 from memory.memory import save_conversation
 from agents.response_agent import humanize_response
 from core.session import (
@@ -61,6 +62,9 @@ def process_message(user_message, session, image_path=None):
     
     elif mode == "weekly_report": 
         response = handle_weekly_report(session)
+
+    elif mode == "chat":
+        response = handle_chat_mode(user_message, session)
 
     else:
 
@@ -125,9 +129,8 @@ def handle_assistant_mode(user_message, session):
 
     else:
 
-        return humanize_response(
-            "The user sent a casual message or greeting that doesn't match any specific intent. Respond warmly and let them know what you can help with: workouts, nutrition, or progress analysis.",
-        )
+        set_mode(session, "chat")
+        return handle_chat_mode(user_message, session)
 
 
 def route_intent(user_message):
@@ -144,7 +147,7 @@ def route_intent(user_message):
     analysis
     weight_update
     weekly_report
-    assistant
+    chat
 
     Rules:
 
@@ -159,16 +162,19 @@ def route_intent(user_message):
     - calories
     - food advice
     - protein
+    - logging meals
+    - user describes food they ate
 
     analysis:
     - progress analysis
     - trends
     - workout consistency
 
-    assistant:
+    chat:
     - greetings
     - casual conversation
-    - anything else
+    - general questions
+    - anything that does not fit the other categories
 
     weight_update example:
     - I weight 87kg, my weight is 86.5kg, I am down to 85kg

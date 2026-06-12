@@ -1,5 +1,6 @@
 import streamlit as st
 import textwrap
+from PIL import Image
 
 from ui import (
     add_spacer,
@@ -14,10 +15,11 @@ from ui import (
     weights_dataframe,
 )
 
+app_logo = Image.open("assets/logo.png")
 
 st.set_page_config(
     page_title="Progress | AiDa",
-    page_icon="assets/logo.png",
+    page_icon=app_logo,
     layout="wide",
 )
 
@@ -42,6 +44,25 @@ cols[0].metric("Current Weight", f"{profile.get('weight') or 0:g} kg")
 cols[1].metric("Weight Change", weight_change)
 cols[2].metric("Workout Completion", f"{metrics['completion_rate']}%")
 cols[3].metric("Meals Logged", len(metrics["meals"]))
+
+# ── Weight update logic ─────────────────────────────────────────────
+if st.session_state.get("pending_weight_update"):
+    with st.container(border=True):
+        st.markdown("#### Update Weight")
+        weight = st.number_input("Current weight (kg)", min_value=20.0, max_value=300.0, step=0.1, value=float(profile.get('weight') or 70.0))
+        btn_col1, btn_col2 = st.columns(2)
+        if btn_col1.button("Save Weight", type="primary", use_container_width=True):
+            st.session_state.pending_weight_update = False
+            ask_aida(f"I weigh {weight} kg now.", mode="weight_update")
+            st.rerun()
+        if btn_col2.button("Cancel", use_container_width=True):
+            st.session_state.pending_weight_update = False
+            st.rerun()
+
+else:
+    if st.button("Update Weight"):
+        st.session_state.pending_weight_update = True
+        st.rerun()
 
 st.markdown("### Weight Trend")
 weights_df = weights_dataframe(metrics["weights"])

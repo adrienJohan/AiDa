@@ -1,7 +1,9 @@
 import streamlit as st
 import textwrap
+from PIL import Image
 
 from agents.orchestrator import process_message
+from agents.response_agent import humanize_response
 from ui import (
     add_spacer,
     ask_aida,
@@ -15,10 +17,11 @@ from ui import (
     sidebar,
 )
 
+app_logo = Image.open("assets/logo.png")
 
 st.set_page_config(
     page_title="Coach | AiDa",
-    page_icon="assets/logo.png",
+    page_icon=app_logo,
     layout="wide",
 )
 
@@ -56,26 +59,6 @@ def camera_dialog():
         path = save_upload(camera)
         st.session_state.pending_photo_log = False
         ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
-        st.rerun()
-
-
-# ── Inline forms for meal log & weight (unchanged logic) ────────────
-if st.session_state.get("pending_meal_log"):
-    with st.form("meal_log_form", clear_on_submit=True):
-        meal = st.text_area("Meal", placeholder="For lunch I ate chicken, rice, and vegetables.")
-        submitted = st.form_submit_button("Log Meal")
-    if submitted and meal.strip():
-        st.session_state.pending_meal_log = False
-        ask_aida(meal, mode="nutrition")
-        st.rerun()
-
-if st.session_state.get("pending_weight_update"):
-    with st.form("weight_update_form", clear_on_submit=True):
-        weight = st.number_input("Current weight", min_value=20.0, max_value=300.0, step=0.1)
-        submitted = st.form_submit_button("Save Weight")
-    if submitted:
-        st.session_state.pending_weight_update = False
-        ask_aida(f"I weigh {weight} kg now.", mode="weight_update")
         st.rerun()
 
 
@@ -119,39 +102,44 @@ if st.session_state.get("pending_photo_log"):
 """,
         unsafe_allow_html=True,
     )
-    upload_col, camera_col = st.columns(2)
-    with upload_col:
+    
+    with st.container(border=True):
         uploaded = st.file_uploader(
             "Upload a meal photo",
             type=["jpg", "jpeg", "png"],
             key="coach_photo_upload",
         )
-    with camera_col:
-        if st.button("Take Photo", use_container_width=True, type="secondary"):
-            camera_dialog()
-
-    if uploaded is not None and st.button("Analyze Photo", type="primary"):
-        path = save_upload(uploaded)
-        st.session_state.pending_photo_log = False
-        ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
-        st.rerun()
+        
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            if st.button("Take Photo", use_container_width=True):
+                camera_dialog()
+        with col2:
+            if st.button("Cancel", use_container_width=True):
+                st.session_state.pending_photo_log = False
+                st.rerun()
+        with col3:
+            analyze_disabled = uploaded is None
+            if st.button("Analyze", type="primary", use_container_width=True, disabled=analyze_disabled):
+                path = save_upload(uploaded)
+                st.session_state.pending_photo_log = False
+                ask_aida("Analyze this meal photo.", mode="nutrition", image_path=path)
+                st.rerun()
 
 
 # ── Quick-action chips ──────────────────────────────────────────────
 st.markdown('<div class="quick-chips-container"></div>', unsafe_allow_html=True)
-cols = st.columns(5)
+cols = st.columns(4)
 if cols[0].button("Completed Workout", use_container_width=True):
     ask_aida("I completed today's workout.", mode="coach")
     st.rerun()
 if cols[1].button("Log Meal", use_container_width=True):
-    st.session_state.pending_meal_log = True
+    prompt_message = humanize_response("The user clicked a button to log a meal. Ask them to describe what they ate in the chat.")
+    st.session_state.aida_messages.append({"role": "assistant", "content": prompt_message})
     st.rerun()
 if cols[2].button("Analyze Meal Photo", use_container_width=True):
     st.session_state.pending_photo_log = True
     st.rerun()
-if cols[3].button("Update Weight", use_container_width=True):
-    st.session_state.pending_weight_update = True
-    st.rerun()
-if cols[4].button("Weekly Report", use_container_width=True):
+if cols[3].button("Weekly Report", use_container_width=True):
     ask_aida("Give me my weekly report.", mode="weekly_report")
     st.rerun()

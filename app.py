@@ -1,5 +1,6 @@
 import streamlit as st
 import textwrap
+from PIL import Image
 
 from ui import (
     add_spacer,
@@ -14,10 +15,11 @@ from ui import (
     sidebar,
 )
 
+app_logo = Image.open("assets/logo.png")
 
 st.set_page_config(
     page_title="AiDa",
-    page_icon="assets/logo.png",
+    page_icon=app_logo,
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -141,7 +143,8 @@ def render_mission_control():
         ask_aida("Create a meal plan for me.", mode="nutrition")
         st.switch_page("pages/Coach.py")
     if action_cols[2].button("Update Weight", use_container_width=True):
-        st.switch_page("pages/Coach.py")
+        st.session_state.pending_weight_update = True
+        st.switch_page("pages/Progress.py")
     if action_cols[3].button("Weekly Report", use_container_width=True):
         ask_aida("Give me my weekly report.", mode="weekly_report")
         st.switch_page("pages/Progress.py")

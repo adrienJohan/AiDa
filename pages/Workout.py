@@ -1,5 +1,6 @@
 import streamlit as st
 import textwrap
+from PIL import Image
 
 from ui import (
     add_spacer,
@@ -14,10 +15,11 @@ from ui import (
     workouts_dataframe,
 )
 
+app_logo = Image.open("assets/logo.png")
 
 st.set_page_config(
     page_title="Workout | AiDa",
-    page_icon="assets/logo.png",
+    page_icon=app_logo,
     layout="wide",
 )
 
