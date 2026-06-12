@@ -5,3 +5,4 @@ sqlite-utils
 pandas
 pillow
 markdown-it-py
+dotenv

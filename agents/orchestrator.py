@@ -21,7 +21,7 @@ from core.session import (
     get_mode,
 )
 
-
+#we load dotenv so we don't have to give the API anymore because it is in .env
 load_dotenv()
 
 
