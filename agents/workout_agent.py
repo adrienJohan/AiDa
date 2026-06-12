@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 from dotenv import load_dotenv
 from google.genai import types
 import json
@@ -53,7 +54,7 @@ def generate_workout(profile):
         response_mime_type="application/json"
     )
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemma-4-26b-a4b-it",
         contents=prompt,
         config=config

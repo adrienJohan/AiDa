@@ -8,4 +8,4 @@ version = "0.1.0"
 
 # This block tells Python exactly which folders are code modules
 [tool.setuptools]
-packages = ["agents", "memory", "utils", "core", "workflows"]
+packages = ["agents", "memory", "utils", "core", "workflows", "database"]

@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 from google.genai import types
 import json
 
@@ -52,7 +53,7 @@ def extract_field_answer( field, user_message):
         system_instruction=system_instruction
     )
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemma-4-26b-a4b-it",
         contents=user_message,
         config=config

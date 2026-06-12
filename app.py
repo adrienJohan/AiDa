@@ -16,6 +16,14 @@ from ui import (
 )
 from agents.orchestrator import process_message
 from agents.response_agent import humanize_response
+from database.db import init_db
+
+@st.cache_resource
+def startup_db():
+    init_db()
+    print("db started successfully")
+
+startup_db()
 
 app_logo = Image.open("assets/logo.png")
 

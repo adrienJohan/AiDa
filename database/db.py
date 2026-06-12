@@ -1,6 +1,9 @@
 import sqlite3
+import os
 
-def init_db(): 
+def init_db():
+    if not os.path.exists("data"):
+        os.makedirs("data")
     conn = sqlite3.connect("data/aida.db")
 
     cursor = conn.cursor()

@@ -1,9 +1,12 @@
+from database.db import init_db
 from core.session import create_session
 from agents.orchestrator import process_message
 
 from memory.memory import (
     get_workout_sessions
 )
+
+init_db()
 
 session = create_session()
 

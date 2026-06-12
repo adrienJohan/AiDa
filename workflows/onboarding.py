@@ -94,7 +94,7 @@ def handle_onboarding(user_message, session):
 
     save_weight_log(
         profile_id,
-        profile_data["weight"]
+        profile["weight"]
     )
 
     set_mode(

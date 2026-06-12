@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 
 from utils.analysis_utils import (
     format_workout_sessions, 
@@ -52,7 +53,7 @@ def generate_weekly_report( profile, workout_sessions, meals, weight_logs):
     """
 
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemma-4-26b-a4b-it",
         contents=prompt
     )

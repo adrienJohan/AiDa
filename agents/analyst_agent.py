@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 from dotenv import load_dotenv
 
 from utils.analysis_utils import format_workout_sessions, format_meals
@@ -70,7 +71,7 @@ def analyze_progress(
 
     print(len(prompt))
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemma-4-26b-a4b-it",
         contents=prompt
     )

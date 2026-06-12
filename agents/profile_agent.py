@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 from google.genai import types
 import json
 
@@ -39,7 +40,7 @@ def profile_agent(user_message):
         response_mime_type="application/json"       
     )
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemma-4-26b-a4b-it",
         contents=user_message,
         config=config

@@ -310,8 +310,13 @@ def is_profile_complete(profile):
     return all(profile.get(field) not in (None, "") for field in ["name", "age", "weight", "height", "goal"])
 
 
-def ensure_state():
+@st.cache_resource
+def _startup_db():
     init_db()
+
+
+def ensure_state():
+    _startup_db()
     if "aida_session" not in st.session_state:
         st.session_state.aida_session = create_session()
     if "aida_messages" not in st.session_state:

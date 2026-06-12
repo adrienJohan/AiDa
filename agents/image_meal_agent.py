@@ -1,4 +1,5 @@
 from google import genai
+from agents.llm_client import generate_with_fallback
 from google.genai import types
 import json
 from datetime import date
@@ -48,7 +49,7 @@ def analyze_meal_image( image_path ) :
         response_mime_type="application/json"
     )
 
-    response = client.models.generate_content(
+    response = generate_with_fallback(
         model="gemini-2.5-flash",
         contents=[
             image,
