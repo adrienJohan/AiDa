@@ -1,0 +1,8 @@
+test results: 
+
+- when we wan to log meal or analyze meal without having a nutrition plan, AiDa drives us into the nutrition pipeline always.
+
+- when there is still no weekly report yet, and the workout plan was generated, it seems like the workout plan generated is displayed in the weekly report section
+
+- we should have the choice to mark workout as missed, or not completed
+
