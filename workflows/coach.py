@@ -123,9 +123,9 @@ def handle_coach_mode( user_message, session ):
         )
 
         return humanize_response(
-            "AiDa needs to ask the user a question to learn about their workout plan preferences.",
+            "AiDa needs to ask the user a specific question to gather missing information before generating a workout plan.",
             {
-                "field": next_field.replace('_', ' '),
+                "target_field_to_fill": next_field.replace('_', ' '),
                 "original_question": get_workout_question(next_field),
             },
         )

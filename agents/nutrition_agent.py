@@ -19,7 +19,7 @@ def generate_meal_plan(profile):
     Goal: {profile['goal']}
     Nutrition preferences: {profile['nutrition_preferences']}
 
-    Generate a realistic meal plan.
+    Generate a realistic meal plan, making a choice of 3 to 4 meal in each part.
 
     Make the meal plan realistic and adapted to user's profile
     """

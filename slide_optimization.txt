@@ -1,0 +1,235 @@
+Slide 7 (2m32)
+
+This is still your biggest opportunity.
+
+You have 6 agents.
+
+The audience does not need a detailed explanation of all 6.
+
+Try this structure:
+
+AiDa uses six specialized agents.
+
+The Profile Agent manages onboarding.
+
+The Workout Agent generates workout plans.
+
+The Nutrition and Image Meal Agents handle food-related tasks.
+
+The Analyst Agent generates insights and reports.
+
+Finally, the Response Agent improves the final answer presented to the user.
+
+The key idea is that each agent has a single responsibility.
+
+Target:
+
+1m15–1m30
+
+Potential gain:
+
+1 minute
+
+Slide 8 (1m46)
+
+This slide is dangerous because it overlaps with Slides 5, 6 and 7.
+
+You already explained:
+
+architecture
+orchestrator
+agents
+
+So here, don't explain them again.
+
+Just explain the flow:
+
+A request starts in the user interface, reaches the orchestrator, is routed to the appropriate workflow, processed by an agent, stored if necessary, and returned to the user.
+
+Target:
+
+1 minute
+
+Potential gain:
+
+45 seconds
+
+Slide 12 (42 seconds)
+
+Honestly, I would shorten it.
+
+Current target:
+
+20 seconds.
+
+Example:
+
+In conclusion, AiDa demonstrates how LLMs can be used to build complete intelligent systems rather than simple chatbots.
+
+Thank you for your attention. I will be happy to answer your questions.
+
+Done.
+
+Potential gain:
+
+20 seconds.
+
+
+
+
+
+Slide 5 (Architecture) — 1m39
+
+I think this slide is still a little long.
+
+The slide has one purpose:
+
+Introduce the four layers.
+
+Not explain the entire system.
+
+I would target:
+
+1m10–1m15
+
+Potential gain:
+
+20–30 seconds.
+
+What to remove
+
+Avoid explaining:
+
+how agents work
+how routing works
+how memory works
+
+Those are the next slides.
+
+For Slide 5:
+
+UI Layer
+
+Orchestration Layer
+
+Agent Layer
+
+Persistence Layer
+
+One sentence each.
+
+Done.
+
+Slide 6 (Core Mechanism) — 1m35
+
+This is probably your biggest opportunity.
+
+The slide has one idea:
+
+The orchestrator decides what happens next.
+
+That's it.
+
+I suspect you're explaining:
+
+routing
+state machine
+examples
+edge cases
+
+all on the same slide.
+
+I would target:
+
+1 minute
+
+Potential gain:
+
+30–40 seconds.
+
+A good explanation:
+
+Every user message is first received by the orchestrator.
+
+Gemini identifies the intent.
+
+The session state is checked.
+
+The message is then routed to the appropriate workflow.
+
+Done.
+
+Slide 8 (System Architecture) — 1m29
+
+This is the slide I would attack hardest.
+
+Because it overlaps with:
+
+Slide 5
+Slide 6
+Slide 7
+
+You have already explained:
+
+layers
+orchestrator
+agents
+
+So on Slide 8:
+
+Don't explain them again.
+
+Just explain the flow.
+
+Target:
+
+50–60 seconds
+
+Potential gain:
+
+30–40 seconds.
+
+Example:
+
+A request starts in the interface.
+
+It reaches the orchestrator.
+
+The orchestrator routes it to the appropriate workflow.
+
+An agent processes the request.
+
+Information is stored if necessary.
+
+The response is returned to the user.
+
+Done.
+
+Slide 11 (Limitations) — 1m38
+
+This is surprisingly long.
+
+Almost the same duration as Architecture.
+
+I think this should be:
+
+1 minute maximum
+
+Potential gain:
+
+30–40 seconds.
+
+You don't need to explain every future feature.
+
+Just:
+
+Limitations
+external LLM dependency
+SQLite scalability
+no wearable integration
+Future Work
+voice interaction
+wearables
+advanced analytics
+
+Done.

@@ -1,0 +1,247 @@
+SUNDAY (3–5 hours)
+Session 1 (1h30–2h)
+Build Presentation Notes
+
+Work with me slide by slide.
+
+For each slide we will create:
+
+Main idea
+3–5 talking points
+Transition to next slide
+Difficult vocabulary
+
+Goal:
+
+By the end, you should have one sheet of notes.
+
+Not a script.
+
+Not paragraphs.
+
+Just key points.
+
+Session 2 (1h)
+First Full Presentation
+
+Present out loud.
+
+Alone.
+
+No memorization.
+
+No stopping to correct mistakes.
+
+The goal is simply:
+
+Finish the presentation.
+
+Even if English is imperfect.
+
+Session 3 (1h)
+Demo Verification
+
+Run ONLY:
+
+✅ Onboarding
+
+✅ Workout Generation
+
+✅ Meal Photo Analysis
+
+✅ Dashboard
+
+✅ Weekly Report (if shown)
+
+Write down:
+
+what button to click
+what prompt to type
+expected result
+
+Create a demo scenario.
+
+Never improvise on presentation day.
+
+Session 4 (30 min)
+Professor Questions List
+
+Create a document.
+
+Title:
+
+Questions I May Receive
+
+Start listing:
+
+Why Gemini?
+Why Multi-Agent?
+Why SQLite?
+Why not ChatGPT?
+Limitations?
+Future work?
+Accuracy?
+
+We will complete it later.
+
+MONDAY (4–5 hours)
+Session 1 (1h30)
+Presentation Practice
+
+Present again.
+
+This time:
+
+slower
+clearer
+less hesitation
+
+Focus on transitions.
+
+Example:
+
+Now that we understand the problem, let's look at the solution.
+
+Session 2 (1h)
+Question Training
+
+Answer questions aloud.
+
+Not in your head.
+
+Speak.
+
+Examples:
+
+Why Gemini?
+
+30-second answer.
+
+Why SQLite?
+
+30-second answer.
+
+Why Multi-Agent?
+
+30-second answer.
+
+Session 3 (1h)
+Demo Run
+
+Complete demonstration.
+
+Start to finish.
+
+Exactly as you would do in class.
+
+Time it.
+
+Session 4 (30–60 min)
+Difficult Slides
+
+Focus only on:
+
+Architecture
+Core Mechanism
+Agents
+Technical Decisions
+
+These are the slides professors care about most.
+
+TUESDAY (10 hours)
+
+This is the critical day.
+
+Morning (3h)
+Full Rehearsal #1
+
+Presentation
+
+Demo
+
+Questions
+
+Everything together.
+
+Exactly like exam day.
+
+Late Morning (1h)
+Fix Weak Points
+
+Review:
+
+words you forget
+slides where you hesitate
+demo steps
+Afternoon (2h)
+Professor Questions Intensive
+
+Prepare answers for:
+
+AI concepts
+architecture
+design decisions
+limitations
+
+This is where marks are often gained.
+
+Afternoon (2h)
+Full Rehearsal #2
+
+Complete run again.
+
+Time yourself.
+
+Target:
+
+8–10 min talking
+3–5 min demo
+
+Total: 15 min
+
+Evening (1–2h)
+Final Run
+
+Last rehearsal.
+
+No major changes.
+
+No coding.
+
+No redesign.
+
+No new features.
+
+Just confidence building.
+
+Then stop.
+
+Sleep.
+
+Things NOT to do
+
+❌ Rewrite the report
+
+❌ Add new features
+
+❌ Refactor code
+
+❌ Change architecture
+
+❌ Learn advanced English vocabulary
+
+❌ Spend hours on British podcasts
+
+Things TO do
+
+✅ Speak out loud
+
+✅ Record yourself
+
+✅ Test the demo
+
+✅ Prepare questions
+
+✅ Practice transitions
+
+✅ Learn the first 30 seconds perfectly

@@ -1,0 +1,312 @@
+Slide 1: Cover 
+
+Main Idea : Introduce myself and the project
+
+Talking points: 
+- Adrien
+- AiDa = AI Daily Assistant
+- Wellness assistant - body transformation
+- Uses AI
+- Combine multiple services
+
+Transition: Before presenting the solution, let's take a look at the problem first.
+
+Vocabulary: 
+- wellness
+- assistant
+
+Speaking tip: 
+- no rush
+- smile
+- breath after greeting
+
+
+
+Slide 2: Agenda
+
+Main Idea: Show roadmap
+
+Talking points: 
+- Problem
+- AiDa
+- Architecture
+- Technical decisions
+- Demo
+- Future work
+
+Transition: let's start with the problem
+
+Vocabulary: 
+- architecture
+- technical decisions
+
+Speaking tip: 
+- 10-15 seconds maximum
+- do not spend time here
+
+
+Slide 3: The problem
+
+Main Idea : Finding a way to your body transformation through internet is difficult
+
+Talking points: 
+- huge amount of information in the web
+- absence of a clear guidance from the start to the end
+- Many applications can resolve part of the problem
+- wellnesss apps are fragmented
+
+
+Transition: These problems are the reason behind AiDa
+
+Vocabulary: 
+- guidance
+- fragmentation
+
+Speaking tip: 
+- This is where storytelling begins
+- don't read the slide
+- explain it
+
+
+
+Slide 4: What is AiDa
+
+Main idea: AiDa unifies severall wellness service(for a healthy lifestyle)
+
+Talking points: 
+- Workout plans
+- Nutrition guidance
+- progress analysis
+- natural conversation
+
+Transition: Now, let's see how the system is built internally
+
+Vocabulary: 
+- nutritionist
+- analyst
+- insights
+
+
+Speaking tip: 
+- solution slide
+- be enthusiastic
+- we are presenting what we built
+
+
+Slide 5: Architecture
+
+Main Idea: AiDa is organized into four layers
+
+Talking Point: 
+- UI layer
+- orchestration layer
+- Agent layer
+- persistence layer
+
+Transition: at the center of this architecture is the orchestrator
+
+Vocabulary: 
+- orcherstration
+- persistence
+- specialized agents
+
+Speaking tip: 
+- don't just list the layers
+- for each layer: what does it do?
+UI Layer -> interaction
+Orchestrator -> coordination
+agents -> intelligence
+persistence -> storage
+
+
+
+Slide 6: Core mechanism (intent routing + session state machine)
+
+Main idea: The orchestrator decides what happens after every user messge
+
+Talking Points: 
+- Central component
+- receives every messge
+- intent classification
+- session state
+- routes to correct workflow
+- Maintains conversation coherence
+
+Transition : Once the orchestrator decides where to send the request, specialized agents take over. 
+
+Vocabulary: 
+- orchestrator
+- intent
+- workflow
+- routing
+- session state
+
+Speaking tip: 
+- tell a story (user sends message -> orchestrator receives it -> gemini identifies intent -> session state checked -> correct workflow executed)
+
+
+Slide 7: Agent layer
+
+Main Idea: Each agent is responsible for a single domain
+
+Talking points: 
+- Workout agent
+- Nutrition agent
+- Image meal agent
+- Analyst agent
+- Profile Agent
+- Response Agent
+- separation of the responsibilities
+
+Transition: These specialized agents are only one part of the system. Let's now look at how all components interact together.
+
+Vocabulary: 
+- specialized
+- constraints
+- onboarding
+- behavioral insights
+
+Speaking tip
+- don't spend 30s per agent
+- one sentence each
+
+
+Slide 8: System architecture - Moving parts
+
+Main Idea: show the complete flow of information
+
+Talking Points: 
+- User Interface
+- Orchestrator
+- Workflow
+- Agent
+- Memory
+- Response
+
+Transition: This architecture led to several important technical decisions.
+
+Vocabulary: 
+- pipeline
+- interaction
+- memory
+
+Speaking tip :
+- use finger
+- follow arrows
+- people understand diagrams better whe we physically follow the flow.
+
+
+Slide 9: Key technical decisions
+
+Main Idea: Explain the two major design choixes
+
+Talking Points: 
+GEMINI: 
+- Multimodal
+- Text + image
+- Single API
+- Simplified meal photo analysis
+- consistent behavior accross agents
+
+MULTI-AGENT: 
+- Separation of responsibilities
+- easier maintenance
+- easier extension
+- better organization
+
+Transition: Now that we've discussed the architecture and design decisions, let's see how AiDa works in practice.
+
+Vocabulary: 
+- multimodal
+- maintainable
+- extensible
+- consistency
+
+Speaking tip: 
+- don't oversell Gemini
+- Keep it practical
+
+
+
+Slide 10: Live demonstration
+
+Main Idea: Show AiDa working in practice
+
+Talking points: 
+- fast onboarding
+- missing information detection
+- workout generation 
+- dashboard
+- meal photo analysis
+- weekly report
+
+Transition: Despite the fact that AiDa covers already numerous fields, there are still weakness that are good to know, for future improvements
+
+
+Vocabulary: 
+- demonstration 
+- onboarding 
+- personalized
+- report
+
+Speaking tip: 
+- it is not a slide
+- this is a bridge
+- just 10-15 seconds then start demo
+
+
+Slide 11: Limitations and roadmap
+
+Main Idea: Show current limitations and future improvements. 
+
+Talking Points: 
+CURRENT LIMITATIONS: 
+- AI estimates are not perfectly accurate
+- Depends on user input quality
+- SQLite is not scalable
+- No wearable integration
+
+FUTURE WORK: 
+- smartwatch integration
+- sleep tracking
+- voice integration 
+- advanced coaching
+
+
+Transition: Despite these limitations the project demonstrates the potential of LLM-powered wellness systems
+
+Vocabulary: 
+- wearable
+- integration 
+- behavioral
+- accuracy
+- scalable
+
+Speaking tip: 
+- accept limitations
+
+
+
+Slide 12: Thank you
+
+Main Idea: Conclude the presentation 
+
+Talking Points: 
+- LLMs can power complete systems
+- More than a chatbot
+- Multiple specialized agents
+- Personalized wellness support
+
+Vocabulary: 
+- ecosystem
+- well-being
+
+Speaking Tip: 
+- don't read the quote
+- give a conclusion
+
+ex: In conclusion, AiDa demonstrates how large LLM can be used to build complete intelligent systems. 
+Thank you for your attention 
+I will be happy to answer your questions
+
+

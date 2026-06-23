@@ -37,7 +37,7 @@ def generate_workout(profile):
         }}
     ],
 
-    "display_text": "Human-readable workout plan"
+    "display_text": "Human-readable workout plan, give the full workout plan for the user, give the detailled workout day by day, and exercise by exercise(do it with markdown also so it has a good UI)"
     }}
 
 

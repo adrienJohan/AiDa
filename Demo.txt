@@ -1,0 +1,10 @@
+Demo : 
+
+1 - New user Onboarding (giving all informations at once) -> 45s
+2 - Existing onboarding example(previous chat with info missing) -> 15s
+3 - Workout -> 1min30s
+4 - Meal logging with photo analysis -> 20s
+5 - Dashboard -> 15s
+6 - Weekly report -> 15s
+
+
